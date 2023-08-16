@@ -24,7 +24,7 @@ def load_cache(p):
 def dump_cache(line, p):
     with open(p, "a") as f:
         f.write(json.dumps(line)+"\n")
-        
+
 # %%
 load_dotenv()
 
@@ -58,8 +58,8 @@ raw_df = raw_df.drop_duplicates(["article_url"]).reset_index(drop=True)
 
 # %%
 # Uncomment to select a specific language to collect
-notna_idxs = raw_df["languages"].notna()
-raw_df = raw_df[(notna_idxs) & (raw_df.loc[notna_idxs, "languages"].apply(lambda x: "English" in x.split(",")))] # english articles
+# notna_idxs = raw_df["languages"].notna()
+# raw_df = raw_df[(notna_idxs) & (raw_df.loc[notna_idxs, "languages"].apply(lambda x: "English" in x.split(",")))] # english articles
 raw_df = raw_df.dropna().reset_index(drop=True)
 raw_df = raw_df[["debunk_id", "article_id", "article_url", "article_archive_url", "debunk_date"]]
 

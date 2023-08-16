@@ -66,7 +66,8 @@ remove_domains = [
     "google",
     "wikipedia",
     "page-not-found",
-    "opinion"
+    "opinion",
+    ".org"
 ]
 
 # %%

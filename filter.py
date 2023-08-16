@@ -33,34 +33,3 @@ df
 
 # %%
 df.to_csv("data/en_euvsdisinfo.csv", index=False)
-
-# %%
-grouped_df = df.groupby(['year', 'quarter']).size().reset_index(name='count')
-pivot_df = grouped_df.pivot(index='year', columns='quarter', values='count')
-
-pivot_df.plot(kind='bar', stacked=True, alpha=0.7)
-plt.tight_layout()
-plt.show()
-
-
-# %%
-for year in df["year"].unique():
-    df_year = df[df["year"] == year]
-    keywords = df_year.loc[~df_year["keywords"].isna(), "keywords"].apply(lambda x: [t.strip().lower() for t in x.split(",")]).explode().value_counts().index.tolist()[:25]
-    named_entities = df_year.loc[~df_year["article_named_entities"].isna(), "article_named_entities"].apply(lambda x: [t.strip().lower() for t in x.split(",")]).explode().value_counts().index.tolist()[:25]
-
-    print(year)
-    print(keywords)
-    print(named_entities)
-
-# %%
-df_2023 = df[df["year"] == 2023]
-df_2023["objective"].value_counts()
-
-# %%
-df_2023["keywords"].apply(lambda x: [t.strip().lower() for t in x.split(",")]).explode().value_counts()
-
-# %%
-df_2023.loc[~df_2023["article_named_entities"].isna(), "article_named_entities"].apply(lambda x: [t.strip().lower() for t in x.split(",")]).explode().value_counts()
-
-
