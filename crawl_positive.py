@@ -6,6 +6,7 @@ import json
 from tqdm import tqdm
 import os
 import hashlib
+from dotenv import load_dotenv
 
 # %%
 def load_cache(p):
@@ -23,6 +24,9 @@ def load_cache(p):
 def dump_cache(line, p):
     with open(p, "a") as f:
         f.write(json.dumps(line)+"\n")
+        
+# %%
+load_dotenv()
 
 # %%
 raw_df = pd.read_csv("raw_data/euvsdisinfo_raw.csv")
@@ -54,8 +58,8 @@ raw_df = raw_df.drop_duplicates(["article_url"]).reset_index(drop=True)
 
 # %%
 # Uncomment to select a specific language to collect
-# notna_idxs = raw_df["languages"].notna()
-# raw_df = raw_df[(notna_idxs) & (raw_df.loc[notna_idxs, "languages"].apply(lambda x: "English" in x.split(",")))] # english articles
+notna_idxs = raw_df["languages"].notna()
+raw_df = raw_df[(notna_idxs) & (raw_df.loc[notna_idxs, "languages"].apply(lambda x: "English" in x.split(",")))] # english articles
 raw_df = raw_df.dropna().reset_index(drop=True)
 raw_df = raw_df[["debunk_id", "article_id", "article_url", "article_archive_url", "debunk_date"]]
 
@@ -92,6 +96,8 @@ for row in tqdm(raw_df.itertuples(), total=len(raw_df)):
                     diffbot_data = json.loads(diffbot_response.content)
                     
             if "error" in diffbot_data.keys():
+                print(diffbot_data)
+                print(api_token)
                 continue
 
             article_text = diffbot_data['objects'][0]['text']

@@ -5,6 +5,7 @@ import os
 import hashlib
 import json
 from tqdm import tqdm
+from dotenv import load_dotenv
 
 # %%
 def load_cache(p):
@@ -28,6 +29,10 @@ def unshorten_url(url):
     resp = session.head(url, allow_redirects=True)
 
     return resp.url
+
+
+# %%
+load_dotenv()
 
 # %%
 df = pd.read_json("crawled_data/positive_cache.json", lines=True)
