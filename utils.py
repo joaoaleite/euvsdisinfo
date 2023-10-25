@@ -78,7 +78,9 @@ def load_tocrawl():
         .dropna(subset=["publication_url"])
         .reset_index(drop=True)
     )
-    tocrawl_df_support["id"] = tocrawl_df_support["publication_url"].apply(lambda x: uuid.uuid5(uuid.NAMESPACE_URL, x))
+    tocrawl_df_support["id"] = tocrawl_df_support["publication_url"].apply(
+        lambda x: str(uuid.uuid5(uuid.NAMESPACE_URL, x))
+    )
     tocrawl_df_support["domain_name"] = tocrawl_df_support["publication_url"].apply(lambda x: extract_domain(x))
 
     tocrawl_df = pd.concat([tocrawl_df_misinfo, tocrawl_df_support], ignore_index=True)

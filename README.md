@@ -1,6 +1,4 @@
 # collect_euvsdisinfo
-- Place a .env file with a DIFFBOT_API_KEY variable.
-- Collect positive examples first.
-- Collect negative examples next.
-- Consolidate.
-- Filter.
+- set the diffbot api key in your environment: export DIFFBOT_API_KEY="your_key".
+- unzip the stratcom-data.zip file inside data/raw/
+- run python3 crawl.py. obs: you may set a different number of processes in the script to speed up the process.
