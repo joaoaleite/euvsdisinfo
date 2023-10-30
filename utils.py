@@ -131,8 +131,8 @@ def crawl(tocrawl_df, api_token, cache_path, verbose=False):
 
                 # if failed, try to get it from archive.org
                 if "objects" in diffbot_data.keys() and diffbot_data["objects"][0]["text"] == "":
-                    url = row.archive_url
-                    params = urlencode({"token": api_token, "url": url, "timeout": timeout})
+                    url_archieve = row.archive_url
+                    params = urlencode({"token": api_token, "url": url_archieve, "timeout": timeout})
                     diffbot_url = f"https://api.diffbot.com/v3/article?{params}"
 
                     # Make the GET request to the Diffbot Article API
@@ -169,6 +169,7 @@ def crawl(tocrawl_df, api_token, cache_path, verbose=False):
                     "article_country": article_country,
                     "article_named_entities": named_entities,
                     "class": row.label,
+                    "domain_name": row.domain_name,
                 }
 
                 dump_cache(d, cache_path)
