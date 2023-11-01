@@ -182,21 +182,86 @@ def crawl(tocrawl_df, api_token, cache_path, verbose=False):
     print("Finished crawling. Failed:", failed)
 
 
-# %%
-# remove_domains = [
-#     "euvsdisinfo",
-#     ".pdf"
-#     "blog"
-#     "facebook",
-#     "twitter",
-#     "instagram",
-#     "fake",
-#     "bellingcat",
-#     "youtube",
-#     "medium",
-#     "google",
-#     "wikipedia",
-#     "page-not-found",
-#     "bit.ly",
-#     "opinion"
-# ]
+def normalise_domains(crawled_df):
+    for publisher in [
+        "nato",
+        "politico",
+        "sputnik",
+        "spiegel",
+        "bbc",
+        "cnn",
+        "rbc",
+        "reuters",
+        "jazeera",
+        "риа новости",
+        "vesti",
+        "rt arabic",
+        "kp",
+        "телеканал царьград",
+        "новости россии, снг и мира - иа regnum",
+        "новая газета",
+        "украина.ру",
+        "российская газета",
+        "политнавигатор",
+        "rt на русском",
+        "rt",
+        "телеканал «звезда»",
+        "rubaltic",
+        "известия",
+        "взгляд",
+        "baltnews",
+        "1tv",
+        "موقع نبض",
+        "نافذة على العالم",
+        "أخبارك.نت",
+        "نيوز فور مي",
+    ]:
+        search = replace = publisher
+        if publisher == "риа новости":
+            replace = "ria"
+        elif publisher == "телеканал царьград":
+            replace = "tsargrad"
+        elif publisher == "rt на русском" or publisher == "rt arabic":
+            replace = "rt"
+        elif publisher == "rt":
+            search = r"\brt\b"
+            replace = "rt"
+        elif publisher == "телеканал «звезда»":
+            replace = "zvezda"
+        elif publisher == "известия":
+            replace = "izvestia"
+        elif publisher == "взгляд":
+            replace = "vzglyad"
+        elif publisher == "موقع نبض":
+            replace = "nabd"
+        elif publisher == "نافذة على العالم":
+            replace = "naftha"
+        elif publisher == "أخبارك.نت":
+            replace = "akhbarak"
+        elif publisher == "украина.ру":
+            replace = "ukraina.ru"
+        elif publisher == "политнавигатор":
+            replace = "politnavigator"
+        elif publisher == "российская газета":
+            replace = "rg"
+        elif publisher == "kp":
+            search = r"\bkp\b"
+            replace = "kp"
+        elif publisher == "новая газета":
+            replace = "novaya gazeta"
+        elif publisher == "новости россии, снг и мира - иа regnum":
+            replace = "regnum"
+        elif publisher == "نيوز فور مي":
+            replace = "newsformy.com"
+        elif publisher == "vesti":
+            search = r"\bvesti\b"
+            replace = "vesti"
+        elif publisher == "jazeera":
+            replace = "al jazeera"
+
+        crawled_df.loc[
+            (crawled_df["publisher"].str.contains(search)) | (crawled_df["domain_name"].str.contains(search)),
+            "publisher",
+        ] = replace
+
+    return crawled_df
