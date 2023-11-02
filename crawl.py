@@ -10,7 +10,7 @@ cache = load_cache(CRAWL_CACHE_PATH)
 print("Cached:", len(cache))
 
 if __name__ == "__main__":
-    num_processes = 4
+    num_processes = 16
     chunk_size = len(tocrawl_df) // num_processes
     chunks = [tocrawl_df[i : i + chunk_size] for i in range(0, len(tocrawl_df), chunk_size)]
 
