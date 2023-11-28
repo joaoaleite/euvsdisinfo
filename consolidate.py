@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 import os
+from polyglot.detect import Detector
+import icu
 
 
 def html_to_text(html_string):
@@ -57,6 +59,21 @@ crawled_df.loc[crawled_df["class"] == "support", "language"] = crawled_df.loc[cr
 crawled_df.loc[crawled_df["language"].str.len() == 2, "language"] = crawled_df[crawled_df["language"].str.len() == 2][
     "language"
 ].apply(lambda x: language_codes[x])
+
+# Check if the detected language is correct. Sometimes, encoding errors happen with Polyglot. It returns a set of 
+# languages with probabilities. We assign only the top language in cases when the prediction is reliable and where the URL is active
+crawled_df["new_lang"]=""
+for i, row in crawled_df.iterrows():
+    try:    
+        new_lang=Detector(row.article_text, quiet=True)
+        reliable=new_lang.reliable
+    except:
+        row.new_lang=row.article_language
+        next
+    if  reliable!=False and "URL was rejected" not in str(row.article_text) and  "temporarily unable to service" not in str(row.article_text):
+        row.new_lang=new_lang.language.name
+    else:
+        row.new_lang=row.article_language              
 
 crawled_df["publisher"] = crawled_df["publisher"].str.casefold()
 crawled_df["disproof"] = crawled_df["disproof"].apply(html_to_text)  # convert HTML to text
