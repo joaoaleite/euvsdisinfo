@@ -70,7 +70,7 @@ for i, row in crawled_df.iterrows():
     except:
         row.new_lang=row.article_language
         next
-    if  reliable!=False and "URL was rejected" not in str(row.article_text) and  "temporarily unable to service" not in str(row.article_text):
+    if  reliable!=False:
         row.new_lang=new_lang.language.name
     else:
         row.new_lang=row.article_language              
