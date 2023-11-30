@@ -5,7 +5,6 @@ from datetime import datetime
 import pandas as pd
 import os
 from polyglot.detect import Detector
-import icu
 
 
 def html_to_text(html_string):
@@ -61,7 +60,7 @@ def normalise_language(crawled_df):
             pred_lang = Detector(row.article_text, quiet=True)
             reliable = pred_lang.reliable
             lang_name = pred_lang.language.name
-        except:
+        except Exception:
             continue
 
         if reliable and row.language != lang_name:
