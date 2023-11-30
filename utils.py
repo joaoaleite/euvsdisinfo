@@ -6,6 +6,7 @@ import uuid
 import requests
 from urllib.parse import urlparse, urlencode
 from tqdm import tqdm
+import numpy as np
 
 
 def load_debunks():
@@ -61,7 +62,7 @@ def load_tocrawl():
     raw_df = raw_df.reset_index(drop=True)
     tocrawl_df_misinfo = pd.concat([pd.DataFrame(raw_df["publishedIn"].tolist())])
     tocrawl_df_misinfo["debunk_id"] = raw_df["debunk_id"]
-    tocrawl_df_misinfo["label"] = "misinformation"
+    tocrawl_df_misinfo["label"] = "disinformation"
     # extracts the domain name even though it already exists, just so that they are consistent with the support articles
     # whose domain names are extracted in this manner.
     tocrawl_df_misinfo["domain_name"] = tocrawl_df_misinfo["publication_url"].apply(lambda x: extract_domain(x))
@@ -265,6 +266,31 @@ def normalise_domains(crawled_df):
         ] = replace
 
     return crawled_df
+
+
+def get_language_distributions_table(df):
+    languages = df["article_language"].unique()
+    classes = df["class"].unique().tolist()
+    total_articles = []
+    class_distributions = []
+
+    for language in languages:
+        total_articles.append(len(df[df["article_language"] == language]))
+        for class_ in classes:
+            class_distributions.append(len(df[(df["article_language"] == language) & (df["class"] == class_)]))
+
+    class_distributions = np.array(class_distributions).reshape(len(languages), len(classes))
+
+    distributions_df = pd.DataFrame(
+        {
+            "total": class_distributions.sum(1),
+            "disinformation": class_distributions[:, 1],
+            "support": class_distributions[:, 0],
+        },
+        index=languages,
+    ).sort_values("total", ascending=False)
+
+    return distributions_df
 
 
 language_codes = {
