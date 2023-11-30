@@ -3,3 +3,5 @@ dvc-gdrive
 pandas
 tqdm
 bs4
+polyglot
+icu
