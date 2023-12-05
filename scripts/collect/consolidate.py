@@ -1,10 +1,12 @@
 # %%
-from utils import load_cache, load_debunks, normalise_domains, language_codes, get_language_distributions_table
+from scripts.utils import load_cache, load_debunks, normalise_domains, language_codes, get_language_distributions_table
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 import os
 from polyglot.detect import Detector
+from nltk.tokenize import sent_tokenize
+import string
 
 
 def html_to_text(html_string):
@@ -32,6 +34,21 @@ def normalise_dates(crawled_df):
     ].apply(lambda x: datetime.strptime(x, "%a, %d %b %Y %H:%M:%S %Z").strftime("%d-%m-%Y"))
 
     return crawled_df
+
+
+def remove_imbalanced_languages(df, threshold=0.95, min_articles=25):
+    # remove highly imbalanced languages and infrequent languages
+    distributions_df = get_language_distributions_table(df)
+    distributions_df = distributions_df[
+        (distributions_df["disinformation"] / distributions_df["total"] < threshold)
+        & (distributions_df["disinformation"] / distributions_df["total"] > 1 - threshold)
+        & (distributions_df["total"] > min_articles)
+    ]
+
+    selected_languages = distributions_df.index.tolist()
+    df = df[df["article_language"].isin(selected_languages)].reset_index(drop=True)
+
+    return df
 
 
 def normalise_language(crawled_df):
@@ -127,6 +144,107 @@ def filter_domains(crawled_df):
     return crawled_df
 
 
+def custom_rules(df):
+    # some more specific filtering rules that were empirically found
+    df.loc[df["article_title"].str.contains("Cappture"), "article_title"] = ""  # remove archive titles
+    df = df[~df["article_title"].str.casefold().str.contains(r"\b404\b")]  # remove 404 request articles
+    df = df[~df["article_title"].str.casefold().str.contains(r"\berror\b")]
+    df = df[~df["article_publisher"].str.casefold().str.contains("google")]
+    df = df[~df["article_publisher"].str.casefold().str.contains("tiktok")]
+    df = df[~df["article_publisher"].str.casefold().str.contains("instagram")]
+    df = df[~df["article_publisher"].str.casefold().str.contains("apple podcasts")]
+
+    df = df[df["article_text"].str.len() > 1]  # remove empty strings
+    df = df.dropna(subset=["article_text"]).reset_index(drop=True)
+    df = df[~df["article_language"].isin(["", "unknown"])].dropna(subset="article_language").reset_index(drop=True)
+
+    return df
+
+
+def filter_by_ngram(df):
+    def remove_punctuation(input_string):
+        # Using string.punctuation to get a string of all ASCII punctuation characters
+        translator = str.maketrans("", "", string.punctuation)
+
+        # Removing punctuation using translate method
+        result_string = input_string.translate(translator)
+
+        return result_string
+
+    filter_rules = [
+        "recurring prokremlin disinformation narrative",
+        "prokremlin disinformation narrative about",
+        "disinformation narrative about the",
+        "see other examples of",
+        "a recurring prokremlin disinformation",
+        "this is a recurring",
+        "disinformation cases alleging that",
+        "similar cases claiming that",
+        "prokremlin disinformation narratives about",
+        "recurring prokremlin disinformation narratives",
+        "read more about the",
+        "read similar cases claiming",
+        "is a recurring prokremlin",
+        "other examples of similar",
+        "recurring prokremlin narrative about",
+        "a recurring prokremlin narrative",
+        "a recurring disinformation narrative",
+        "earlier disinformation cases alleging",
+        "see earlier disinformation cases",
+        "disinformation narratives about the",
+        "recurring prokremlin disinformation",
+        "prokremlin disinformation narrative",
+        "disinformation narrative about",
+        "a recurring prokremlin",
+        "see other examples",
+        "prokremlin disinformation narratives",
+        "recurring prokremlin narrative",
+        "other examples of",
+        "disinformation narratives about",
+        "is a recurring",
+    ]
+
+    # tokenize the disproof text into sentences
+    debunk_df = load_debunks()
+    sentences = debunk_df["disproof"].apply(sent_tokenize).explode().tolist()
+
+    filtered_sentences = []
+    for sentence in sentences:
+        clean_sentence = remove_punctuation(html_to_text(sentence.lower()))
+        for rule in filter_rules:
+            if rule in clean_sentence:
+                filtered_sentences.append(sentence)
+                break
+
+    urls = []
+    urls = [BeautifulSoup(sentence, "html.parser").find_all("a") for sentence in filtered_sentences]
+    urls = [url.get("href") for lurl in urls for url in lurl]
+
+    matched_urls = df[df["article_url"].isin(urls)]
+
+    trustworthy = [
+        "bbc",
+        "reuters",
+        "the guardian",
+        "dw.com",
+        "radiofreeeurope/radioliberty",
+        "washington post",
+        "cnn",
+        "ap news",
+        "euronews",
+        "politico",
+        "npr",
+        "new york times",
+        "france 24",
+        "polygraph.info",
+    ]
+
+    ids_to_remove = matched_urls[~matched_urls["article_publisher"].isin(trustworthy)]["article_id"].tolist()
+    df = df[~df["article_id"].isin(ids_to_remove)].reset_index(drop=True)
+
+    return df
+
+
 if __name__ == "__main__":
     CACHE_PATH = os.path.join("data", "caches", "cache.json")
     assert os.path.exists(CACHE_PATH)
@@ -151,10 +269,16 @@ if __name__ == "__main__":
     crawled_df = crawled_df.drop_duplicates(subset=["text"])
 
     # remove articles with less than 700 characters
+    print("Initial size:", len(crawled_df))
+
+    size = len(crawled_df)
     condition = crawled_df["text"].str.len() > 700
     crawled_df = crawled_df[condition]
+    print("'Remove short articles':", size - len(crawled_df))
 
+    size = len(crawled_df)
     crawled_df = filter_domains(crawled_df)
+    print("'Filter Domains':", size - len(crawled_df))
 
     crawled_df = crawled_df[
         [
@@ -188,42 +312,24 @@ if __name__ == "__main__":
         axis=1,
     )
 
-    # some more specific filtering rules that were empirically found
-    consolidated_df.loc[consolidated_df["article_title"].str.contains("Cappture"), "article_title"] = (
-        ""  # remove noisy titles
-    )
-    consolidated_df = consolidated_df[
-        ~consolidated_df["article_title"].str.casefold().str.contains(r"\b404\b")
-    ]  # remove 404 request articles
-    consolidated_df = consolidated_df[
-        ~consolidated_df["article_title"].str.casefold().str.contains(r"\berror\b")
-    ]  # remove error articles
-    consolidated_df = consolidated_df[~consolidated_df["article_publisher"].str.casefold().str.contains("google")]
-    consolidated_df = consolidated_df[~consolidated_df["article_publisher"].str.casefold().str.contains("tiktok")]
-    consolidated_df = consolidated_df[~consolidated_df["article_publisher"].str.casefold().str.contains("instagram")]
-    consolidated_df = consolidated_df[
-        ~consolidated_df["article_publisher"].str.casefold().str.contains("apple podcasts")
-    ]
+    size = len(consolidated_df)
 
-    consolidated_df = consolidated_df[consolidated_df["article_text"].str.len() > 1]  # remove empty strings
+    custom_rules(consolidated_df)
+    print("'Custom rules':", size - len(consolidated_df))
 
-    # %%
-    # remove highly imbalanced languages and infrequent languages
-    distributions_df = get_language_distributions_table(consolidated_df)
-    distributions_df = distributions_df[
-        (distributions_df["disinformation"] / distributions_df["total"] < 0.95)
-        & (distributions_df["disinformation"] / distributions_df["total"] > 0.05)
-        & (distributions_df["total"] > 25)
-    ]
+    size = len(consolidated_df)
+    consolidated_df = filter_by_ngram(consolidated_df)
+    print("'Filter by ngram':", size - len(consolidated_df))
 
-    selected_languages = distributions_df.index.tolist()
-    # top_languages = crawled_df["language"].value_counts().head(15).index.to_list()
-    consolidated_df = consolidated_df[consolidated_df["article_language"].isin(selected_languages)].reset_index(
-        drop=True
-    )
+    consolidated_df_full = consolidated_df.copy()
+    consolidated_df.to_csv("data/euvsdisinfo_full.csv", index=False)
 
-    consolidated_df = consolidated_df.dropna(subset=["article_text"]).reset_index(drop=True)
-
+    size = len(consolidated_df)
+    consolidated_df = remove_imbalanced_languages(consolidated_df)
     consolidated_df.to_csv("data/euvsdisinfo.csv", index=False)
+    print("'Remove imbalanced languages':", size - len(consolidated_df))
+
+    print("Full size:", len(consolidated_df_full))
+    print("Short size:", len(consolidated_df))
 
 # %%

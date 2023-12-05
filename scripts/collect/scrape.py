@@ -1,5 +1,5 @@
 import os
-from utils import load_cache, load_tocrawl, dump_cache
+from scripts.utils import load_cache, load_tocrawl, dump_cache
 from tqdm import tqdm
 from multiprocessing import Pool
 from urllib.parse import urlencode
