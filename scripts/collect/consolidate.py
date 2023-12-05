@@ -1,5 +1,5 @@
 # %%
-from scripts.utils import load_cache, load_debunks, normalise_domains, language_codes, get_language_distributions_table
+from utils import load_cache, load_debunks, normalise_domains, language_codes, get_language_distributions_table
 from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
