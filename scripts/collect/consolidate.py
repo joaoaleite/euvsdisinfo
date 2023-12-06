@@ -5,8 +5,12 @@ from datetime import datetime
 import pandas as pd
 import os
 from polyglot.detect import Detector
+from polyglot.detect.base import logger as polyglot_logger
+from pycld2 import error as pycld2_error
 from nltk.tokenize import sent_tokenize
 import string
+
+polyglot_logger.setLevel("ERROR")
 
 
 def html_to_text(html_string):
@@ -72,13 +76,15 @@ def normalise_language(crawled_df):
     # Check if the detected language is correct. Sometimes, encoding errors happen with Polyglot. It returns a set of
     # languages with probabilities. We assign only the top language in cases when the prediction is reliable
     # and where the URL is active
+
     for _, row in crawled_df.iterrows():
         try:
-            pred_lang = Detector(row.article_text, quiet=True)
-            reliable = pred_lang.reliable
-            lang_name = pred_lang.language.name
-        except Exception:
+            pred_lang = Detector(row.text, quiet=True)
+        except pycld2_error:
             continue
+
+        reliable = pred_lang.reliable
+        lang_name = pred_lang.language.name
 
         if reliable and row.language != lang_name:
             row.language = lang_name
