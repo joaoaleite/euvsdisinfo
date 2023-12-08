@@ -77,18 +77,23 @@ def normalise_language(crawled_df):
     # languages with probabilities. We assign only the top language in cases when the prediction is reliable
     # and where the URL is active
 
+    new_lang = []
     for _, row in crawled_df.iterrows():
         try:
             pred_lang = Detector(row.text, quiet=True)
         except pycld2_error:
+            new_lang.append(None)
             continue
 
         reliable = pred_lang.reliable
         lang_name = pred_lang.language.name
 
         if reliable and row.language != lang_name:
-            row.language = lang_name
+            new_lang.append(lang_name)
+        else:
+            new_lang.append(row.language)
 
+    crawled_df["language"] = new_lang
     return crawled_df
 
 
