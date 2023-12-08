@@ -120,7 +120,7 @@ for target_language in languages:
         weighted_f1 = 0
         for language in set(langs):
             df_lang = preds_df[preds_df["langs"] == language]
-            labels = df_lang["labels"].tolist()
+            l = df_lang["labels"].tolist()
             p = df_lang["preds"].tolist()
             f1_score = f1.compute(predictions=p, references=l, average="macro")["f1"]
             p_neg = precision_negative.compute(predictions=p, references=l, average="binary")["precision"]
@@ -145,17 +145,18 @@ for target_language in languages:
 languages = [
     "English",
     "Russian",
-    "French",
     "German",
+    "French",
     "Spanish",
-    "Polish",
+    "Georgian",
     "Czech",
-    "Azerbaijani",
-    "Lithuanian",
+    "Polish",
     "Italian",
+    "Lithuanian",
     "Romanian",
+    "Slovak",
+    "Serbian",
     "Finnish",
-    "Bulgarian",
 ]
 
 results = pd.concat([pd.DataFrame.from_dict(r) for r in final_results])

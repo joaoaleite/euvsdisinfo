@@ -160,17 +160,18 @@ for target_language in languages:
 languages = [
     "English",
     "Russian",
-    "French",
     "German",
+    "French",
     "Spanish",
-    "Polish",
+    "Georgian",
     "Czech",
-    "Azerbaijani",
-    "Lithuanian",
+    "Polish",
     "Italian",
+    "Lithuanian",
     "Romanian",
+    "Slovak",
+    "Serbian",
     "Finnish",
-    "Bulgarian",
 ]
 
 results = pd.concat([pd.DataFrame.from_dict(r) for r in final_results])
