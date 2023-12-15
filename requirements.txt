@@ -6,3 +6,7 @@ bs4
 polyglot
 icu
 numpy
+transformers
+torch
+scikit-learn
+datasets
