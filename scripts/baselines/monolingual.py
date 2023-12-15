@@ -1,7 +1,7 @@
 # %%
-import os
+# import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
 # %%
 PRETRAINED_NAME = "bert-base-multilingual-cased"
