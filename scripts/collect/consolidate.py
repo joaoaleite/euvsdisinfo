@@ -294,7 +294,7 @@ if __name__ == "__main__":
     crawled_df = crawled_df[
         [
             "debunk_id",
-            # "debunk_title",
+            "debunk_title",
             # "summary",
             # "disproof",
             "keywords",

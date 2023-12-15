@@ -39,10 +39,10 @@ df = pd.read_csv("data/euvsdisinfo.csv")
 df["text"] = df["article_title"].fillna("") + " " + df["article_text"]
 df["label"] = df["class"].apply(lambda x: 0 if x == "support" else 1)
 languages = df["article_language"].unique()
-
+df["label+language"] = df["label"].astype(str) + df["article_language"]
 
 # %%
-df = df[["text", "label", "article_language"]]
+df = df[["text", "label", "article_language", "label+language"]]
 
 # %%
 final_results = []
@@ -51,7 +51,7 @@ for seed in range(10):
     random.seed(seed)
     np.random.seed(seed)
 
-    train_df, test_df = train_test_split(df, test_size=0.3, random_state=seed, stratify=df["article_language"])
+    train_df, test_df = train_test_split(df, test_size=0.3, random_state=seed, stratify=df["label+language"])
     language_weights = {
         language: len(test_df[test_df["article_language"] == language]) / len(test_df)
         for language in test_df["article_language"].unique()

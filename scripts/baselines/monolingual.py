@@ -57,7 +57,9 @@ for target_language in languages:
 
         language_df = df[df["article_language"] == target_language]
         num_neg, num_pos = len(language_df[language_df["label"] == 0]), len(language_df[language_df["label"] == 1])
-        train_df, test_df = train_test_split(language_df, test_size=0.3, random_state=seed)
+        train_df, test_df = train_test_split(
+            language_df, test_size=0.3, random_state=seed, stratify=language_df["label"]
+        )
 
         size = len(test_df)
         language_weights[seed][target_language] = size
@@ -75,7 +77,9 @@ for target_language in languages:
 
         language_df = df[df["article_language"] == target_language]
         num_neg, num_pos = len(language_df[language_df["label"] == 0]), len(language_df[language_df["label"] == 1])
-        train_df, test_df = train_test_split(language_df, test_size=0.3, random_state=seed)
+        train_df, test_df = train_test_split(
+            language_df, test_size=0.3, random_state=seed, stratify=language_df["label"]
+        )
 
         train_dataset = Dataset.from_pandas(train_df)
         test_dataset = Dataset.from_pandas(test_df)
