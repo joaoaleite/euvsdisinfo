@@ -98,3 +98,7 @@ if __name__ == "__main__":
 
     with Pool(num_processes) as pool:
         results = pool.starmap(crawl, [(chunk, api_token, CRAWL_CACHE_PATH, True) for chunk in chunks])
+
+    df = load_cache(CRAWL_CACHE_PATH)
+    df = pd.DataFrame(df)
+    df.to_csv("data/euvsdisinfo.csv", index=False)
