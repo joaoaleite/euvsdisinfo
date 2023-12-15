@@ -16,6 +16,47 @@ import numpy as np
 import torch
 import random
 
+
+def get_language_distributions_table(df):
+    languages = df["article_language"].unique()
+    classes = df["class"].unique().tolist()
+    total_articles = []
+    class_distributions = []
+
+    for language in languages:
+        total_articles.append(len(df[df["article_language"] == language]))
+        for class_ in classes:
+            class_distributions.append(len(df[(df["article_language"] == language) & (df["class"] == class_)]))
+
+    class_distributions = np.array(class_distributions).reshape(len(languages), len(classes))
+
+    distributions_df = pd.DataFrame(
+        {
+            "total": class_distributions.sum(1),
+            "disinformation": class_distributions[:, 1],
+            "support": class_distributions[:, 0],
+        },
+        index=languages,
+    ).sort_values("total", ascending=False)
+
+    return distributions_df
+
+
+def remove_imbalanced_languages(df, threshold=0.95, min_articles=25):
+    # remove highly imbalanced languages and infrequent languages
+    distributions_df = get_language_distributions_table(df)
+    distributions_df = distributions_df[
+        (distributions_df["disinformation"] / distributions_df["total"] < threshold)
+        & (distributions_df["disinformation"] / distributions_df["total"] > 1 - threshold)
+        & (distributions_df["total"] > min_articles)
+    ]
+
+    selected_languages = distributions_df.index.tolist()
+    df = df[df["article_language"].isin(selected_languages)].reset_index(drop=True)
+
+    return df
+
+
 # %%
 metric = evaluate.load("f1")
 
@@ -36,6 +77,7 @@ def tokenize_function(examples):
 
 # %%
 df = pd.read_csv("data/euvsdisinfo.csv")
+df = remove_imbalanced_languages(df)
 df["text"] = df["article_title"].fillna("") + " " + df["article_text"]
 df["label"] = df["class"].apply(lambda x: 0 if x == "support" else 1)
 languages = df["article_language"].unique()
