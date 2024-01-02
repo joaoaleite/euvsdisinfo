@@ -1,0 +1,6 @@
+lr:
+  value: 1.7855073487639013e-05
+train_epochs:
+  value: 5
+weight_decay:
+  value: 0.005113605008627235

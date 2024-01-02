@@ -25,7 +25,7 @@ def main():
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels, average="macro")
 
-    with open("scripts/baselines/main_experiment/bert_sweep_config.yaml") as file:
+    with open("scripts/baselines/main_experiment/artefacts/bert_sweep_config.yaml") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
     wandb.init(config=config)

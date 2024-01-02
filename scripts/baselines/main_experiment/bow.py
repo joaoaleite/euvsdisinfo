@@ -104,6 +104,7 @@ def score_best_model(model, best_params, X_train, y_train, X_test, y_test, test_
 
 def main():
     results_path = "scripts/baselines/main_experiment/results"
+    artefacts_path = "scripts/baselines/main_experiment/artefacts"
     data_path = "data/"
     train_path = os.path.join(data_path, "train.csv")
     dev_path = os.path.join(data_path, "dev.csv")
@@ -177,7 +178,7 @@ def main():
         # Save results and best parameters
         csv_path = os.path.join(results_path, f"results_{model.__name__}.csv")
         final_results.to_csv(csv_path)
-        params_path = os.path.join(results_path, f"params_{model.__name__}.json")
+        params_path = os.path.join(artefacts_path, f"params_{model.__name__}.json")
         with open(params_path, "w") as f:
             json.dump(best_params, f)
 

@@ -44,7 +44,7 @@ def tokenize_function(examples):
 df = pd.read_csv("data/train.csv")
 df["label+language"] = df["label"].astype(str) + df["language"]
 
-with open("scripts/baselines/main_experiment/euvsdisinfo_bert_config.yaml") as file:
+with open("scripts/baselines/main_experiment/artefacts/euvsdisinfo_bert_config.yaml") as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
 
 lr = config["lr"]["value"]
