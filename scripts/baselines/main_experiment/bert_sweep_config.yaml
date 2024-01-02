@@ -1,0 +1,21 @@
+method: random
+metric:
+  goal: maximize
+  name: F1-Macro
+name: euvsdisinfo-bert-sweep
+parameters:
+  lr:
+    distribution: log_uniform_values
+    max: 0.1
+    min: 1e-07
+  train_epochs:
+    values:
+      - 3
+      - 5
+      - 10
+  weight_decay:
+    distribution: log_uniform_values
+    max: 0.1
+    min: 0.001
+program: scripts/baselines/main_experiment/bert_sweep.py
+project: EuvsDisinfo
