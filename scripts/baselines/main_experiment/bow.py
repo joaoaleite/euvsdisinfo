@@ -15,7 +15,6 @@ best hyperparameters.
 import pandas as pd
 import scipy.sparse as sp
 import os
-import numpy as np
 from tqdm import tqdm
 
 from sklearn.model_selection import ParameterGrid, StratifiedKFold
@@ -103,18 +102,19 @@ def score_best_model(model, best_params, X_train, y_train, X_test, y_test, test_
 
 
 def main():
-    results_path = "scripts/baselines/main_experiment/results"
-    artefacts_path = "scripts/baselines/main_experiment/artefacts"
-    data_path = "data/"
-    train_path = os.path.join(data_path, "train.csv")
-    dev_path = os.path.join(data_path, "dev.csv")
+    results_path = os.path.join("data", "results", "main_experiment")
+    os.makedirs(results_path, exist_ok=True)
+
+    artefacts_path = os.path.join("artefacts")
+    os.makedirs(artefacts_path, exist_ok=True)
+
+    data_path = os.path.join("data", "experiments")
+    train_path = os.path.join(data_path, "euvsdisinfo.csv")
+    dev_path = os.path.join(data_path, "euvsdisinfo_dev.csv")
 
     assert all(
         [os.path.exists(path) for path in [train_path, dev_path]]
     ), f"Data split files not found at '{data_path}'. Run the split_data.py script first."
-
-    if not os.path.exists(results_path):
-        os.makedirs(results_path)
 
     train = pd.read_csv(train_path)
     dev = pd.read_csv(dev_path)
@@ -130,7 +130,11 @@ def main():
     models = [MultinomialNB, SVC]
     params = [
         {"alpha": [0.1, 1.0, 10.0]},
-        {"C": [0.001, 0.1, 1.0, 5.0, 10.0], "kernel": ["linear", "rbf"], "gamma": ["scale", "auto"]},
+        {
+            "C": [0.001, 0.1, 1.0, 5.0, 10.0],
+            "kernel": ["linear", "rbf"],
+            "gamma": ["scale", "auto"],
+        },
     ]
 
     # The train set (90%) is now used to perform 10-fold cross-validation

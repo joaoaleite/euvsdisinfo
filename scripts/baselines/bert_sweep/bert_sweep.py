@@ -7,6 +7,8 @@ import numpy as np
 import random
 import evaluate
 import yaml
+import os
+import sys
 
 
 def main():
@@ -25,13 +27,12 @@ def main():
         predictions = np.argmax(logits, axis=-1)
         return metric.compute(predictions=predictions, references=labels, average="macro")
 
-    with open("scripts/baselines/main_experiment/artefacts/bert_sweep_config.yaml") as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
+    wandb.init()
+    dataset = wandb.config.dataset
 
-    wandb.init(config=config)
-
-    train_df = pd.read_csv("data/train.csv")
-    dev_df = pd.read_csv("data/dev.csv")
+    data_path = os.path.join("data", "experiments")
+    train_df = pd.read_csv(os.path.join(data_path, f"{dataset}.csv"))
+    dev_df = pd.read_csv(os.path.join(data_path, f"{dataset}_dev.csv"))
 
     train_dataset = Dataset.from_pandas(train_df)
     dev_dataset = Dataset.from_pandas(dev_df)
