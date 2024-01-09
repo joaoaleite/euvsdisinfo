@@ -63,6 +63,7 @@ def run_gridsearch(model, param_grid, X_train, y_train, X_dev, y_dev, dev_langua
             best_score = score
             best_params = params
 
+    print(best_score)
     return best_params
 
 
@@ -105,7 +106,7 @@ def main():
     results_path = os.path.join("data", "results", "main_experiment")
     os.makedirs(results_path, exist_ok=True)
 
-    artefacts_path = os.path.join("artefacts")
+    artefacts_path = os.path.join("data", "artefacts")
     os.makedirs(artefacts_path, exist_ok=True)
 
     data_path = os.path.join("data", "experiments")
@@ -120,16 +121,16 @@ def main():
     dev = pd.read_csv(dev_path)
 
     X_train = train["text"]
-    y_train = train["class"]
+    y_train = train["label"]
     train_languages = train["language"]
 
     X_dev = dev["text"]
-    y_dev = dev["class"]
+    y_dev = dev["label"]
     dev_languages = dev["language"]
 
     models = [MultinomialNB, SVC]
     params = [
-        {"alpha": [0.1, 1.0, 10.0]},
+        {"alpha": [0.01, 0.1, 1.0, 10.0]},
         {
             "C": [0.001, 0.1, 1.0, 5.0, 10.0],
             "kernel": ["linear", "rbf"],
