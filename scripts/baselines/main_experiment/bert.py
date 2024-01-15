@@ -9,7 +9,7 @@ import random
 import yaml
 import os
 
-PRETRAINED_NAME = "bert-base-multilingual-cased"
+PRETRAINED_NAME = "xlm-roberta-base"
 SEED = 42
 torch.manual_seed(SEED)
 random.seed(SEED)
@@ -106,6 +106,11 @@ for i, (train_idxs, test_idxs) in enumerate(skf.split(df, df["label+language"]))
     precision_positive = evaluate.load("precision", pos_label=1)
     recall_negative = evaluate.load("recall", pos_label=0)
     recall_positive = evaluate.load("recall", pos_label=1)
+    p_neg = precision_negative.compute(predictions=preds, references=labels, average="binary")["precision"]
+    p_pos = precision_positive.compute(predictions=preds, references=labels, average="binary")["precision"]
+    r_neg = recall_negative.compute(predictions=preds, references=labels, average="binary")["recall"]
+    r_pos = recall_positive.compute(predictions=preds, references=labels, average="binary")["recall"]
+
     results = {"language": [], "f1": [], "weight": []}
 
     weighted_f1 = 0
@@ -115,11 +120,6 @@ for i, (train_idxs, test_idxs) in enumerate(skf.split(df, df["label+language"]))
         labels = df_lang["label"].tolist()
         preds = df_lang["preds"].tolist()
         f1_score = f1.compute(predictions=preds, references=labels, average="macro")["f1"]
-        p_neg = precision_negative.compute(predictions=preds, references=labels, average="binary")["precision"]
-        p_pos = precision_positive.compute(predictions=preds, references=labels, average="binary")["precision"]
-        r_neg = recall_negative.compute(predictions=preds, references=labels, average="binary")["recall"]
-        r_pos = recall_positive.compute(predictions=preds, references=labels, average="binary")["recall"]
-
         weight = len(df_lang) / len(preds_df)
         weighted_f1 += f1_score * weight
         avg_f1 += f1_score
@@ -160,7 +160,14 @@ weighted_f1 = (results["f1"]["mean"].values * results["weight"]["mean"].values).
 avg_f1 = results["f1"]["mean"].mean()
 results.loc["Weighted F1"] = [weighted_f1, "", ""]
 results.loc["Avg. F1"] = [avg_f1, "", ""]
+results.loc["Precision Negative"] = [p_neg, "", ""]
+results.loc["Precision Positive"] = [p_pos, "", ""]
+results.loc["Recall Negative"] = [r_neg, "", ""]
+results.loc["Recall Positive"] = [r_pos, "", ""]
+
+
 results.columns = ["F1 Mean", "F1 Std", "Weight"]
+
 results = results.reset_index()
 
 results_path = os.path.join("data", "results", "main_experiment")
