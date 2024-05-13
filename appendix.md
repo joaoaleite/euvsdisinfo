@@ -1,0 +1,59 @@
+# Appendix
+This is the technical appendix for our paper "EUvsDisinfo: a Dataset for Multilingual Detection of Pro-Kremlin
+Disinformation in News Articles" submitted to CIKM 2024.
+
+## A - N-Grams Filters
+Table A1 displays the N-grams referring to related debunk articles cited in EUvsDisinfo's response section. To obtain the N-grams, we lowercase, remove punctuations, and then sentence tokenise the text within the response section. Next, we use the <a href="https://radimrehurek.com/gensim/models/phrases.html">Gensim</a> Python library to compute 3-grams and 4-grams. We check the most frequent 3 and 4-grams within the sentences, and sort them decreasingly. Finally, we select the N-grams that refer to other debunks, such as "recurring pro-kremilin disinformation", or "see similar cases". Using this list of N-grams, we remove URLs that appear in the same sentence with an N-gram in the list.
+
+
+| N-gram                                       | #Sentences |
+|----------------------------------------------|------------|
+| recurring pro-kremlin disinformation narrative | 3,123      |
+| pro-kremlin disinformation narrative about   | 2,398      |
+| disinformation narrative about               | 1,236      |
+| see other examples of                       | 927        |
+| a recurring pro-kremlin disinformation       | 848        |
+| this is a recurring                         | 802        |
+| disinformation cases alleging that           | 753        |
+| similar cases claiming that                  | 736        |
+| pro-kremlin disinformation narratives about | 697        |
+| recurring pro-kremlin disinformation narratives | 681      |
+| read more about the                         | 560        |
+| read similar cases claiming                 | 525        |
+| is a recurring pro-kremlin                  | 464        |
+| other examples of similar                   | 453        |
+| recurring pro-kremlin narrative about       | 447        |
+| a recurring pro-kremlin narrative           | 441        |
+| a recurring disinformation narrative        | 439        |
+| earlier disinformation cases alleging       | 430        |
+| see earlier disinformation cases            | 422        |
+| disinformation narratives about             | 375        |
+|----------------------------------------------|------------|
+| recurring pro-kremlin disinformation        | 4,541      |
+| pro-kremlin disinformation narrative        | 4,015      |
+| disinformation narrative about              | 2,767      |
+| a recurring pro-kremlin                    | 1,363      |
+| see other examples                          | 1,145      |
+| pro-kremlin disinformation narratives       | 1,114      |
+| recurring pro-kremlin narrative             | 1,036      |
+| other examples of                           | 1,008      |
+| disinformation narratives about             | 952        |
+| is a recurring                             | 898        |
+| see similar cases                          | 731        |
+
+[Table A1: N-grams associated to related debunk articles cited
+in EUvsDisinfo’s response section, along with the number of
+sentences in which the n-gram occurs. 4-grams are above the
+dashed line, and 3-grams are below the dashed line.]
+
+## B - Hyperparameters and Training Details
+
+For the Multinomial Naive Bayes MNB baseline, we try four different values for alpha (the Laplace smoothing constant): $0.1$, $1.0$, and $10$. For the Support Vector Machine (SVM) baseline, we tune three hyperparameters: $C$ (the regularisation parameter), with values of $1e^{-3}$, $1e^{-1}$, $1.0$, $5.0$, and $10$, the kernel type, as either linear or using a radial basis function (rbf). When using the rbf kernel, we also tune the gamma parameter (kernel coefficient) trying both $\frac{1}{\#features \times \sigma^2(features)}$ and $\frac{1}{\#features}$, as defined in the Scikit-Learn framework documentation 1. The best alpha for the MNB baseline is 0.1, which achieves an $F_{macroAVG}$ of $0.63$ on the development set. For the SVM model, the best configuration uses a $C$ of $1.0$ and a linear kernel. This configuration achieves an $F_{macroAVG}$ of $0.74$ on the development set.
+
+For the mBERT and XLM-RoBERTa baselines, we finetune the pre-trained bert-base-multilingual-cased ($110M$ parameters) and XLM-RoBERTa-base ($125M$ parameters), respectively. For each of them, we run $10$ randomly sampled hyperparameter configurations considering the number of training epochs ($3$, $5$, or $10$), values of learning rate between $1e^{-1}$ and $1e^{-7}$ and weight decay between $1e^{-1}$ and $1e^{-3}$. Both the values of learning rate and weight decay are sampled uniformly from a logarithmic distribution. We truncate and pad the sequences to a maximum of 512 tokens (the maximum allowed for these architectures). This is done because the input articles are generally extensive (averaging $6,346$ characters, as shown in Section 2 (Methodology). The batch size is fixated at $16$. This the highest factor of $2$ that fit into $40GB$ of VRAM. Other configurations are the default defined in the <a href="https://huggingface.co/docs/transformers/main_classes/trainer">HuggingFace deep learning framework</a>.
+
+The best mBERT configuration uses a learning rate of $1.78e^{-5}$, a weight decay of $5.1e^{-3}$, and trains for $5$ epochs, achieving an $F_{macroAVG}$ of $0.79$ on the development set. The best XLM-R configuration uses a learning rate of $6.2e^{-6}$, a weight decay of $5.4e^{-3}$, and trains for $5$ epochs, achieving an $F_{macroAVG}$ of $0.77$ on the development set.
+
+For the cross-dataset experiments, we searched for hyperparameters with respect to each dataset using a mBERT model, and we followed the same procedure used for the baseline experiments. The best configurations for FakeCovid and MM-Covid are, respectively, a learning rate of $3.6e^{-6}$ and $1.7e^{-5}$, weight decay of $1.7e^{-2}$ and $1.9e^{-3}$, and $10$ and $5$ training epochs, achieving $F_{macroAVG}$ scores of $0.59$ and $0.96$.
+
+All experiments involving mBERT and XLM-RoBERTa are performed on a single Nvidia A100 40GB GPU
