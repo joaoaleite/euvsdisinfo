@@ -17,5 +17,8 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper TB
     1. Run the python script for the desired scenario inside baselines/.
     2. After finished, the script will save the results in a file named ```results_{scenario}.csv``` in the root folder.
 
+## Appendix:
+Please refer to <a href="https://github.com/JAugusto97/euvsdisinfo/blob/main/appendix.md">appendix.md</a>
+
 ## Citing:
 TBA
