@@ -46,7 +46,59 @@ in EUvsDisinfo’s response section, along with the number of
 sentences in which the n-gram occurs. 4-grams are above the
 dashed line, and 3-grams are below the dashed line.]
 
-## B - Hyperparameters and Training Details
+
+## B - Distribution of Classes per Language
+Table B1 shows the detailed breakdown of disinformation and trustworthy articles per language for EUvsDisinfo. We indicate the languages used throughout the experiments using a dashed line.
+
+| Language        | Total | Disinformation | Trustworthy |
+|-----------------|-------|----------------|-------------|
+| English         | 6,546 | 425            | 6,121       |
+| Russian         | 5,825 | 5,356          | 469         |
+| German          | 313   | 216            | 97          |
+| French          | 292   | 165            | 127         |
+| Spanish         | 287   | 243            | 44          |
+| Georgian        | 156   | 146            | 10          |
+| Czech           | 152   | 111            | 41          |
+| Polish          | 147   | 44             | 103         |
+| Italian         | 103   | 85             | 18          |
+| Lithuanian      | 78    | 28             | 50          |
+| Romanian        | 68    | 17             | 51          |
+| Slovak          | 35    | 32             | 3           |
+| Serbian         | 31    | 27             | 4           |
+| Finnish         | 30    | 8              | 22          |
+|-----------------|-------|----------------|-------------|
+| Arabic          | 3,451 | 3,449          | 2           |
+| Ukrainian       | 323   | 8              | 315         |
+| Hungarian       | 147   | 144            | 3           |
+| Armenian        | 87    | 83             | 4           |
+| Azerbaijani     | 54    | 54             | 0           |
+| Swedish         | 22    | 4              | 18          |
+| Bulgarian       | 18    | 4              | 14          |
+| Dutch           | 11    | 3              | 8           |
+| Norwegian       | 9     | 0              | 9           |
+| Estonian        | 8     | 0              | 8           |
+| Indonesian      | 8     | 6              | 2           |
+| Bosnian         | 7     | 6              | 1           |
+| Latvian         | 6     | 3              | 3           |
+| Croatian        | 6     | 4              | 2           |
+| Greek           | 5     | 2              | 3           |
+| Belarusian      | 5     | 0              | 5           |
+| Afrikaans       | 3     | 3              | 0           |
+| Macedonian      | 3     | 1              | 2           |
+| Chinese         | 2     | 2              | 0           |
+| Persian         | 2     | 1              | 1           |
+| Filipino        | 2     | 0              | 2           |
+| Turkish         | 1     | 0              | 1           |
+| Norwegian (Nynorsk) | 1  | 0              | 1           |
+| Japanese        | 1     | 0              | 1           |
+| Danish          | 1     | 0              | 1           |
+| Catalan         | 1     | 0              | 1           |
+| Korean          | 1     | 1              | 0           |
+| Portuguese      | 1     | 1              | 0           |
+
+[Table B1: Class distribution per language for EUvsDisinfo. per language. Languages above the dashed line are used in the classification experiments.]
+
+## C - Hyperparameters and Training Details
 
 For the Multinomial Naive Bayes MNB baseline, we try four different values for alpha (the Laplace smoothing constant): $0.1$, $1.0$, and $10$. For the Support Vector Machine (SVM) baseline, we tune three hyperparameters: $C$ (the regularisation parameter), with values of $1e^{-3}$, $1e^{-1}$, $1.0$, $5.0$, and $10$, the kernel type, as either linear or using a radial basis function (rbf). When using the rbf kernel, we also tune the gamma parameter (kernel coefficient) trying both $\frac{1}{n_features \times \sigma^2(features)}$ and $\frac{1}{n_features}$, as defined in the Scikit-Learn framework documentation 1. The best alpha for the MNB baseline is 0.1, which achieves an $F_{macroAVG}$ of $0.63$ on the development set. For the SVM model, the best configuration uses a $C$ of $1.0$ and a linear kernel. This configuration achieves an $F_{macroAVG}$ of $0.74$ on the development set.
 
