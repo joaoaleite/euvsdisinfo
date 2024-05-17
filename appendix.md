@@ -106,6 +106,20 @@ For the mBERT and XLM-RoBERTa baselines, we finetune the pre-trained bert-base-m
 
 The best mBERT configuration uses a learning rate of $1.78e^{-5}$, a weight decay of $5.1e^{-3}$, and trains for $5$ epochs, achieving an $F_{macroAVG}$ of $0.79$ on the development set. The best XLM-R configuration uses a learning rate of $6.2e^{-6}$, a weight decay of $5.4e^{-3}$, and trains for $5$ epochs, achieving an $F_{macroAVG}$ of $0.77$ on the development set.
 
-For the cross-dataset experiments, we searched for hyperparameters with respect to each dataset using a mBERT model, and we followed the same procedure used for the baseline experiments. The best configurations for FakeCovid and MM-Covid are, respectively, a learning rate of $3.6e^{-6}$ and $1.7e^{-5}$, weight decay of $1.7e^{-2}$ and $1.9e^{-3}$, and $10$ and $5$ training epochs, achieving $F_{macroAVG}$ scores of $0.59$ and $0.96$.
-
 All experiments involving mBERT and XLM-RoBERTa are performed on a single Nvidia A100 40GB GPU
+
+## D - Cross-Dataset Experiment
+Lastly, we study the cross-dataset generalisation capabilities of the best performing mBERT model. In addition to the EUvsDisinfo dataset, the experiments make use of the two other inherently multilingual datasets presented in Table 1, namely MM-Covid and FakeCovid. Following the methodology described in Section 4, for each dataset $D_i$, we filter out the under-represented languages, and use 10\% of the dataset exclusively for mBERT hyperparameter search. The best hyperparameters for each dataset are described below**. These portions of the datasets are then discarded. Next, we train the mBERT model using the entirety of the dataset $D_i$, and score it with the entirety of each of the other datasets $D_{j\neq i}$. Similarly to the methodology in Perez Rosas et. al. 2018, we compare the cross-dataset scores against baselines scores obtained by training and testing the \texttt{mBERT} model on the same dataset. For these baseline scenarios, we perform a leave-one-out 10-fold cross-validation strategy. Table D1 displays the cross-dataset results using EUvsDisinfo, MM-Covid, and FakeCovid, for which the baseline $F_{macroAVG}$ scores are $0.83$, $0.96$, and $0.66$, respectively.
+
+| Train         | Test        | $F_{macroAVG}$ |
+|---------------|-------------|---------------------------|
+| EUvsDisinfo   | FakeCovid   | 0.37 (↓41.3%)             |
+| EUvsDisinfo   | MM-Covid    | 0.41 (↓57.3%)             |
+| FakeCovid     | EUvsDisinfo | 0.44 (↓47.0%)             |
+| FakeCovid     | MM-Covid    | 0.18 (↓81.3%)             |
+| MM-Covid      | EUvsDisinfo | 0.55 (↓33.7%)             |
+| MM-Covid      | FakeCovid   | 0.46 (↓27.0%)             |
+
+[Table D1: Cross-Dataset results. The percentage decrease with respect to the baseline score for the test set (EUvsDisinfo=0.83, MM-Covid=0.96, FakeCovid=0.66) is shown within parenthesis.]
+
+** The best configurations for FakeCovid and MM-Covid are, respectively, a learning rate of $3.6e^{-6}$ and $1.7e^{-5}$, weight decay of $1.7e^{-2}$ and $1.9e^{-3}$, and $10$ and $5$ training epochs, achieving $F_{macroAVG}$ scores of $0.59$ and $0.96$.
