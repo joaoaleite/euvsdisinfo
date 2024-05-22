@@ -1,5 +1,5 @@
-# Appendix
-This is the technical appendix for our paper "EUvsDisinfo: a Dataset for Multilingual Detection of Pro-Kremlin
+# Supplementary material
+This is the supplementary material for our paper "EUvsDisinfo: a Dataset for Multilingual Detection of Pro-Kremlin
 Disinformation in News Articles" submitted to CIKM 2024.
 
 ## A - N-Grams Filters
