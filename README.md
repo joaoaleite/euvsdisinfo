@@ -3,6 +3,7 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper TB
 
 ## Setup python environment:
     conda create -n euvsdisinfo python=3.11.5
+    conda activate euvsdisinfo
     pip install -r requirements.txt
 
 ## To collect the data:
