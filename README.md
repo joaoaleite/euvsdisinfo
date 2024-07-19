@@ -7,10 +7,9 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper TB
     pip install -r requirements.txt
 
 ## To collect the data:
-1. Download the supplementary data ```euvsdisinfo_base.csv``` and place it inside the ```data``` folder.
+1. Download the base data file [euvsdisinfo_base.csv](https://zenodo.org/records/10514307) and place it inside the ```data``` folder.
 2. Run ```python3 scripts/collect/collect.py```.
 3. When finished, the script should save a file named ```euvsdisinfo.csv``` inside the ```data``` folder.
-
 
 ## To reproduce the experiments:
 - **Data analysis**: open and run the eda.ipynb jupyter notebook.
