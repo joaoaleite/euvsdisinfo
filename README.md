@@ -1,4 +1,8 @@
-# Collect EuvsDisinfo
+## About
+This repository contains the materials that allow reproducing the work introduced in the paper "EUvsDisinfo: A Dataset for Multilingual Detection of Pro-Kremlin Disinformation in News Articles". The EUvsDisinfo dataset contains around 18K articles labelled as either containing misinformation or not. The misinformation articles are sourced from pro-Kremilin outlets, while non-misinformation articles are sourced from credible / less biased outlets. The dataset is collected according to the URLs cited within the debunks made by the EUvsDisinfo organisation in [their website](https://euvsdisinfo.eu).
+
+
+## Collect EuvsDisinfo
 Use this repository to collect the EuvsDisinfo dataset described in our paper TBA.
 
 ## Setup python environment:
