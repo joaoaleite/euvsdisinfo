@@ -26,5 +26,8 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper TB
 ## Supplementary material:
 Please refer to [this file](https://github.com/JAugusto97/euvsdisinfo/blob/main/supplementary_material.md).
 
+## License
+The EUvsDisinfo dataset is licensed under a Creative Commons BY-SA 4.0 license. The code available for reproducing experiments is licensed under an Apache-2.0 license that can be found in the file LICENSE.txt.
+
 ## Citing:
 TBA
