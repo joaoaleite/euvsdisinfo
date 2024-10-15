@@ -31,5 +31,7 @@ The EUvsDisinfo dataset is licensed under a Creative Commons BY-SA 4.0 license. 
 
 ## Citing:
 Dataset: https://zenodo.org/records/10514307
+
 Software: https://zenodo.org/records/10492913
+
 Paper: TBA
