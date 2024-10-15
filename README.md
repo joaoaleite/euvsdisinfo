@@ -11,7 +11,7 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper TB
     pip install -r requirements.txt
 
 ## To collect the data:
-1. Download the base data file [euvsdisinfo_base.csv](https://zenodo.org/records/10514307).
+1. Download the base data file in [Zenodo](https://zenodo.org/records/10514307).
 2. Create a folder named ```data``` in the root directory.
 3. Place the base data file inside the ```data``` folder.
 4. Run ```python3 scripts/collect/collect.py```.
@@ -30,4 +30,6 @@ Please refer to [this file](https://github.com/JAugusto97/euvsdisinfo/blob/main/
 The EUvsDisinfo dataset is licensed under a Creative Commons BY-SA 4.0 license. The code available for reproducing experiments is licensed under an Apache-2.0 license that can be found in the file LICENSE.txt.
 
 ## Citing:
-TBA
+Dataset: https://zenodo.org/records/10514307
+Software: https://zenodo.org/records/10492913
+Paper: TBA
