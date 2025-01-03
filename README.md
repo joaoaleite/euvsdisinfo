@@ -34,7 +34,7 @@ Dataset: https://zenodo.org/records/10514307
 
 Software: https://zenodo.org/records/10492913
 
-Paper:
+Paper: https://dl.acm.org/doi/abs/10.1145/3627673.3679167
 
 ```
 @inproceedings{10.1145/3627673.3679167,
