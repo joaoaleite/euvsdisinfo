@@ -36,6 +36,8 @@ Software: https://zenodo.org/records/10492913
 
 Paper: https://dl.acm.org/doi/abs/10.1145/3627673.3679167
 
+BibTex: 
+
 ```
 @inproceedings{10.1145/3627673.3679167,
 author = {Leite, Jo\~{a}o A. and Razuvayevskaya, Olesya and Bontcheva, Kalina and Scarton, Carolina},
