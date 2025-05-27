@@ -2,7 +2,6 @@
 *.pdf
 *.png
 *.wandb
-data/
 *.csv
 wandb/
 

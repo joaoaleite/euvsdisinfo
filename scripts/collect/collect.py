@@ -7,6 +7,10 @@ import requests
 import pandas as pd
 
 api_token = os.getenv("DIFFBOT_API_KEY")
+if not api_token:
+    raise ValueError(
+        "Please set the DIFFBOT_API_KEY environment variable with your Diffbot API token. See the README for instructions."
+    )
 
 
 def load_cache(p):
@@ -19,6 +23,11 @@ def load_cache(p):
                 except json.decoder.JSONDecodeError:
                     print("Wrong formatting at line", i + 1)
 
+    else:
+        print("Cache file does not exist. Creating a new one.")
+        with open(p, "w") as f:
+            pass
+
     return cache
 
 
@@ -27,7 +36,7 @@ def dump_cache(line, p):
         f.write(json.dumps(line) + "\n")
 
 
-CRAWL_CACHE_PATH = "data/caches/cache.json"
+CRAWL_CACHE_PATH = "data/cache.json"
 cache = load_cache(CRAWL_CACHE_PATH)
 print("Cached:", len(cache))
 
@@ -56,9 +65,14 @@ def crawl(tocrawl_df, api_token, cache_path, verbose=False):
                 diffbot_data = json.loads(diffbot_response.content)
 
                 # if failed, try to get it from archive.org
-                if "objects" in diffbot_data.keys() and diffbot_data["objects"][0]["text"] == "":
+                if (
+                    "objects" in diffbot_data.keys()
+                    and diffbot_data["objects"][0]["text"] == ""
+                ):
                     url_archieve = row.archive_url
-                    params = urlencode({"token": api_token, "url": url_archieve, "timeout": timeout})
+                    params = urlencode(
+                        {"token": api_token, "url": url_archieve, "timeout": timeout}
+                    )
                     diffbot_url = f"https://api.diffbot.com/v3/article?{params}"
 
                     # Make the GET request to the Diffbot Article API
@@ -97,7 +111,9 @@ if __name__ == "__main__":
     chunks = [df[i : i + chunk_size] for i in range(0, len(df), chunk_size)]
 
     with Pool(num_processes) as pool:
-        results = pool.starmap(crawl, [(chunk, api_token, CRAWL_CACHE_PATH, True) for chunk in chunks])
+        results = pool.starmap(
+            crawl, [(chunk, api_token, CRAWL_CACHE_PATH, True) for chunk in chunks]
+        )
 
     df = load_cache(CRAWL_CACHE_PATH)
     df = pd.DataFrame(df)
