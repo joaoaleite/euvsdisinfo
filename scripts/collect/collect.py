@@ -74,11 +74,6 @@ def dump_cache(line, p):
         f.write(json.dumps(line) + "\n")
 
 
-CRAWL_CACHE_PATH = "data/cache.json"
-cache = load_cache(CRAWL_CACHE_PATH)
-print("Cached:", len(cache))
-
-
 def get_archive_url(url, user_agent):
     cdx_api = WaybackMachineCDXServerAPI(url, user_agent)
     try:
@@ -164,6 +159,9 @@ if __name__ == "__main__":
     args = parse_args()
     api_token = args.api_token
     CRAWL_CACHE_PATH = args.cache_path
+    cache = load_cache(CRAWL_CACHE_PATH)
+    print("Cached:", len(cache))
+
     parallel = args.parallel
     if parallel:
         num_processes = args.num_processes
