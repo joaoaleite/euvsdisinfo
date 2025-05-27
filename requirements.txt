@@ -10,3 +10,5 @@ scikit-learn
 datasets
 evaluate
 matplotlib
+loguru
+waybackpy

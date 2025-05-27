@@ -12,14 +12,16 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper 'E
 
 ## To collect the data:
 1. Get API Keys for the [DiffBot API](https://www.diffbot.com/) (free for academic purposes).
-2. Set the environment variable DIFFBOT_API_KEY with your keys: ```export DIFFBOT_API_KEY="my_keys"```
-3. Download the base data file in [Zenodo](https://zenodo.org/records/10514307).
-4. Place the base data file inside the ```data``` folder.
-5. Run ```python3 scripts/collect/collect.py```.
-6. When finished, the script should save a file named ```euvsdisinfo.csv``` inside the ```data``` folder.
+2. Download the base data file in [Zenodo](https://zenodo.org/records/10514307).
+3. Place the base data file inside the ```data``` folder.
+4. Run ```python3 scripts/collect/collect.py --api_token=<YOUR_DIFFBOT_API_KEYS>```.
+5. When finished, the script should save a file named ```euvsdisinfo.csv``` inside the ```data``` folder.
 
-Note: A cache file ```data/cache.json``` will be created while you are collecting the articles. If your script stops for some reason, you can just run it again and it should continue from that point.
- 
+Notes: 
+1. A cache file ```data/cache.json``` will be created while you are collecting the articles. If your script stops for some reason, you can just run it again and it should continue from that point.
+2. On step 4, you may try to add ```--parallel``` as an optional argument to speed up the process. 
+3. On step 4, you may add ```LOGGER_LEVEL=DEBUG``` at the start of the command if you're having any issues and want to debug them.
+
 ## To reproduce the experiments:
 - **Data analysis**: open and run the eda.ipynb jupyter notebook.
 - **Classification**: 
