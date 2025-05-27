@@ -14,11 +14,12 @@ Use this repository to collect the EuvsDisinfo dataset described in our paper 'E
 1. Get API Keys for the [DiffBot API](https://www.diffbot.com/) (free for academic purposes).
 2. Set the environment variable DIFFBOT_API_KEY with your keys: ```export DIFFBOT_API_KEY="my_keys"```
 3. Download the base data file in [Zenodo](https://zenodo.org/records/10514307).
-4. Create a folder named ```data``` in the root directory.
-5. Place the base data file inside the ```data``` folder.
-6. Run ```python3 scripts/collect/collect.py```.
-7. When finished, the script should save a file named ```euvsdisinfo.csv``` inside the ```data``` folder.
+4. Place the base data file inside the ```data``` folder.
+5. Run ```python3 scripts/collect/collect.py```.
+6. When finished, the script should save a file named ```euvsdisinfo.csv``` inside the ```data``` folder.
 
+Note: A cache file ```data/cache.json``` will be created while you are collecting the articles. If your script stops for some reason, you can just run it again and it should continue from that point.
+ 
 ## To reproduce the experiments:
 - **Data analysis**: open and run the eda.ipynb jupyter notebook.
 - **Classification**: 
