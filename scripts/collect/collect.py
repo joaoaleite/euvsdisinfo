@@ -47,9 +47,10 @@ def parse_args():
         type=str,
         default="data/euvsdisinfo.csv",
         help="Path to the output CSV file where crawled articles will be saved (default: data/euvsdisinfo.csv)",
-    )    
+    )
 
     return parser.parse_args()
+
 
 def load_cache(p):
     cache = []
@@ -146,7 +147,6 @@ def crawl(tocrawl_df, api_token, cache_path):
                 logger.debug(
                     f"Successfully crawled {row.article_id} - {row.article_url}"
                 )
-
 
         except Exception as e:
             print("ERROR:", e)
