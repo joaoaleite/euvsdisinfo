@@ -23,6 +23,7 @@ Notes:
 1. A cache file ```data/cache.json``` will be created while you are collecting the articles. If your script stops for some reason, you can just run it again and it should continue from that point.
 2. On step 4, you may try to add ```--parallel``` as an optional argument to speed up the process. 
 3. On step 4, you may add ```LOGGER_LEVEL=DEBUG``` at the start of the command if you're having any issues and want to debug them.
+4. If you completed the scraping process and the ```euvsdisinfo.csv``` file contains less than 18,249 articles, it may be the case that some articles are no longer available online.
 
 ## To reproduce the experiments:
 - **Data analysis**: open and run the eda.ipynb jupyter notebook.
