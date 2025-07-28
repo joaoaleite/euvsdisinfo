@@ -5,7 +5,9 @@ This repository contains the materials that allow reproducing the work introduce
 ## Collect EuvsDisinfo
 Use this repository to collect the EuvsDisinfo dataset described in our paper 'EUvsDisinfo: A Dataset for Multilingual Detection of Pro-Kremlin Disinformation in News Articles'.
 
-## Setup python environment:
+## Setup python environment with conda:
+Install [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/install), then run:
+
     conda create -n euvsdisinfo python=3.11.5
     conda activate euvsdisinfo
     pip install -r requirements.txt
